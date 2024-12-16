@@ -14,11 +14,11 @@ import com.example.evelin.ui.component.bar.BottomNavBar
 import com.example.evelin.ui.component.bar.TopBar
 import com.example.evelin.ui.component.item.EventItem
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
 import com.example.evelin.R
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
+fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(modifier = modifier.fillMaxSize()) {
         TopBar(onFilterClick = { /* Handle filter click */ })
         Spacer(modifier = Modifier.height(16.dp))
@@ -59,5 +59,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    val navController = rememberNavController()
+    HomeScreen(navController = navController)
 }

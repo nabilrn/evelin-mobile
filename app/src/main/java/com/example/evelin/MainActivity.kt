@@ -15,6 +15,8 @@ import com.example.evelin.ui.login.LoginScreen
 import com.example.evelin.ui.register.RegisterScreen
 import com.example.evelin.ui.home.HomeScreen
 import com.example.evelin.data.UserPreferences
+import com.example.evelin.ui.addEvent.AddEventScreen
+import com.example.evelin.ui.profile.ProfileScreen
 import kotlinx.coroutines.flow.first
 
 class MainActivity : ComponentActivity() {
@@ -38,7 +40,6 @@ fun EvelinApp() {
             UserPreferences.saveLoginStatus(context, true)
         }
         Log.d("EvelinApp", "Token: $token, isLoggedIn: $isLoggedIn")
-
     }
 
     val isLoggedIn = remember { UserPreferences.isLoggedIn(context) }
@@ -57,8 +58,10 @@ fun EvelinApp() {
     }
 
     NavHost(navController = navController, startDestination = if (isLoggedIn) "home" else "login") {
-        composable("login") { LoginScreen(context,navController) }
+        composable("login") { LoginScreen(context, navController) }
         composable("register") { RegisterScreen(navController) }
-        composable("home") { HomeScreen() }
+        composable("home") { HomeScreen(navController = navController) }
+        composable("profile") { ProfileScreen(navController) }
+        composable("addEvent") { AddEventScreen(navController)  }
     }
 }
