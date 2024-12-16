@@ -74,7 +74,7 @@ fun ProfileScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = { /* TODO: Handle Informasi Profil */ },
+                    onClick = { navController.navigate("userInfo") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                     shape = RoundedCornerShape(8.dp)
@@ -82,7 +82,7 @@ fun ProfileScreen(navController: NavController) {
                     Text("Informasi Profil", color = Color.White)
                 }
                 Button(
-                    onClick = { /* TODO: Handle Riwayat Kegiatan */ },
+                    onClick = { navController.navigate("eventHistory") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                     shape = RoundedCornerShape(8.dp)

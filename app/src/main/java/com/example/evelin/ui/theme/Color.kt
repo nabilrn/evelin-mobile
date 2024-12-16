@@ -10,6 +10,7 @@ val BackGround = Color(0xffeef8ed)
 val LightGray = Color(0xFFF1F1F1)
 val LightGreen = Color(0xFFEFF9ED)
 val White = Color(0xFFFFFFFF)
+val Blue = Color(0xFF007AFF)
 
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)

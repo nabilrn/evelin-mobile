@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 object UserPreferences {
@@ -24,13 +25,15 @@ object UserPreferences {
 
     fun isLoggedIn(context: Context): Boolean {
         val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(KEY_IS_LOGGED_IN, false)
-        Log.d("UserPreferences", "isLoggedIn: ${prefs.getBoolean(KEY_IS_LOGGED_IN, false)}")
+        val loggedIn = prefs.getBoolean(KEY_IS_LOGGED_IN, false)
+        Log.d("UserPreferences", "isLoggedIn: $loggedIn")
+        return loggedIn
     }
 
     fun saveLoginStatus(context: Context, isLoggedIn: Boolean) {
         val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putBoolean(KEY_IS_LOGGED_IN, isLoggedIn).apply()
+        Log.d("UserPreferences", "Login status saved: $isLoggedIn")
     }
 
     fun getToken(context: Context): Flow<String?> {

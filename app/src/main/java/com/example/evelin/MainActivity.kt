@@ -16,7 +16,11 @@ import com.example.evelin.ui.register.RegisterScreen
 import com.example.evelin.ui.home.HomeScreen
 import com.example.evelin.data.UserPreferences
 import com.example.evelin.ui.addEvent.AddEventScreen
+import com.example.evelin.ui.eventDetail.EventDetailsScreen
+import com.example.evelin.ui.history.EventHistoryScreen
 import com.example.evelin.ui.profile.ProfileScreen
+import com.example.evelin.ui.registerEvent.RegisterEventScreen
+import com.example.evelin.ui.userInfo.UserInfoScreen
 import kotlinx.coroutines.flow.first
 
 class MainActivity : ComponentActivity() {
@@ -62,6 +66,10 @@ fun EvelinApp() {
         composable("register") { RegisterScreen(navController) }
         composable("home") { HomeScreen(navController = navController) }
         composable("profile") { ProfileScreen(navController) }
-        composable("addEvent") { AddEventScreen(navController)  }
+        composable("addEvent") { AddEventScreen(navController) }
+        composable("userInfo") { UserInfoScreen(onBackClick = { navController.popBackStack() }) }
+        composable("eventHistory") { EventHistoryScreen(onBackClick = { navController.popBackStack() }) }
+        composable("eventDetails") { EventDetailsScreen(navController = navController) }
+        composable("registerEvent"){ RegisterEventScreen(onBackClick = { navController.popBackStack() }) }
     }
 }

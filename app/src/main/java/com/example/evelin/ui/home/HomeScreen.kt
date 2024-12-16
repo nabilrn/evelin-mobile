@@ -30,9 +30,10 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         ) {
             items(listOf("Event 1", "Event 2", "Event 3")) { event ->
                 EventItem(
+                    navController = navController, // Pass navController here
                     eventName = event,
                     eventDescription = "Description for $event",
-                    eventImage = painterResource(id = R.drawable.reza_kecap)
+                    eventImage = painterResource(id = R.drawable.foto_seminar)
                 )
             }
         }
@@ -45,9 +46,10 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         ) {
             items(listOf("Event A", "Event B", "Event C")) { event ->
                 EventItem(
+                    navController = navController, // Pass navController here
                     eventName = event,
                     eventDescription = "Description for $event",
-                    eventImage = painterResource(id = R.drawable.reza_kecap)
+                    eventImage = painterResource(id = R.drawable.foto_seminar)
                 )
             }
         }
