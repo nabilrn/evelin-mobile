@@ -9,23 +9,29 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evelin.ui.component.bar.BottomNavBar
 import com.example.evelin.R
 import com.example.evelin.ui.theme.Green
+import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel = viewModel()) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     Log.d("ProfileScreen", "Entering ProfileScreen")
     Scaffold(
         bottomBar = {
@@ -98,7 +104,15 @@ fun ProfileScreen(navController: NavController) {
                     Text("Kegiatan yang Diselenggarakan", color = Color.White)
                 }
                 Button(
-                    onClick = { /* TODO: Handle Kegiatan yang Diselenggarakan */ },
+                    onClick = {
+                        coroutineScope.launch {
+                            profileViewModel.logout(context) {
+                                navController.navigate("login") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            }
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                     shape = RoundedCornerShape(8.dp)

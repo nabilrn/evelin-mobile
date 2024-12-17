@@ -34,3 +34,7 @@ data class Data(
 	@field:SerializedName("refreshToken")
 	val refreshToken: String
 )
+data class LogoutResponse(
+	@SerializedName("success") val success: Boolean,
+	@SerializedName("message") val message: String
+)

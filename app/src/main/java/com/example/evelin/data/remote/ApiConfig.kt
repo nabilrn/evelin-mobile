@@ -2,6 +2,7 @@ package com.example.evelin.data.remote
 
 import com.example.evelin.BuildConfig
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -10,6 +11,9 @@ object ApiConfig {
     private const val BASE_URL = BuildConfig.BASE_URL
 
     private val client = OkHttpClient.Builder()
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
         .connectTimeout(600, TimeUnit.SECONDS)
         .readTimeout(600, TimeUnit.SECONDS)
         .writeTimeout(600, TimeUnit.SECONDS)
