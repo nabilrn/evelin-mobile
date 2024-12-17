@@ -5,11 +5,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.evelin.data.UserRepository
-import com.example.evelin.data.remote.ApiService
 import com.example.evelin.di.Injection
 import com.example.evelin.ui.home.HomeViewModel
 import com.example.evelin.ui.login.LoginViewModel
 import com.example.evelin.ui.profile.ProfileViewModel
+import com.example.evelin.ui.register.RegisterViewModel
 
 class ViewModelFactory(private val repository: UserRepository) : ViewModelProvider.NewInstanceFactory() {
 
@@ -25,7 +25,9 @@ class ViewModelFactory(private val repository: UserRepository) : ViewModelProvid
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
                 ProfileViewModel(repository) as T
             }
-
+            modelClass.isAssignableFrom(RegisterViewModel::class.java) -> {
+                RegisterViewModel(repository) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
     }

@@ -73,11 +73,11 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-compiler:2.51.1")
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler.v2511)
 
     // KSP
-    implementation("com.google.devtools.ksp:symbol-processing-api:2.0.21-1.0.25")
+    implementation(libs.symbol.processing.api)
 
     implementation(libs.accompanist.navigation.animation)
 }

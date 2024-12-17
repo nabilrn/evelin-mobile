@@ -25,11 +25,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evelin.ui.component.bar.BottomNavBar
 import com.example.evelin.R
+import com.example.evelin.ViewModelFactory
 import com.example.evelin.ui.theme.Green
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel = viewModel()) {
+fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel = viewModel(factory = ViewModelFactory.getInstance(LocalContext.current))) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     Log.d("ProfileScreen", "Entering ProfileScreen")

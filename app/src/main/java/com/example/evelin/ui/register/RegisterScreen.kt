@@ -16,14 +16,20 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evelin.R
+import com.example.evelin.ViewModelFactory
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 
 @Composable
-fun RegisterScreen(navController: NavController, registerViewModel : RegisterViewModel = RegisterViewModel()) {
+fun RegisterScreen(navController: NavController) {
+    val context = LocalContext.current
+    val registerViewModel: RegisterViewModel = viewModel(
+        factory = ViewModelFactory.getInstance(context)
+    )
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
@@ -31,7 +37,6 @@ fun RegisterScreen(navController: NavController, registerViewModel : RegisterVie
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier

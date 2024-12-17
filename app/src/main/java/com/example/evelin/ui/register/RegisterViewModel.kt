@@ -4,11 +4,11 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evelin.data.remote.ApiConfig
+import com.example.evelin.data.UserRepository
 import com.example.evelin.data.request.RegisterRequest
 import kotlinx.coroutines.launch
 
-class RegisterViewModel : ViewModel() {
+class RegisterViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     fun register(
         context: Context,
@@ -30,7 +30,7 @@ class RegisterViewModel : ViewModel() {
                     password = password,
                     password_confirmation = passwordConfirmation
                 )
-                val response = ApiConfig.api.register(request)
+                val response = userRepository.register(request)
                 if (!response.error) {
                     Toast.makeText(context, "Register success", Toast.LENGTH_SHORT).show()
                     onResult(true)

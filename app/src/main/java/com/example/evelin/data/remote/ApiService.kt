@@ -27,6 +27,6 @@ interface ApiService {
     @GET("/events")
     suspend fun getEvents(
         @Header("Authorization") token: String
-    ): EventsResponse}
-
+    ): EventsResponse
 }
+

@@ -5,9 +5,11 @@ import com.example.evelin.data.pref.UserPreference
 
 import com.example.evelin.data.remote.ApiService
 import com.example.evelin.data.request.LoginRequest
+import com.example.evelin.data.request.RegisterRequest
 import com.example.evelin.data.response.DataUser
 import com.example.evelin.data.response.EventsResponse
 import com.example.evelin.data.response.LoginResponse
+import com.example.evelin.data.response.RegisterResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -39,6 +41,13 @@ class UserRepository private constructor(
 
     private fun getToken(): String {
         return runBlocking { userPreference.getSession().first().token }
+    }
+    suspend fun register(request: RegisterRequest): RegisterResponse {
+        return try {
+            apiService.register(request)
+        } catch (e: HttpException) {
+            throw e
+        }
     }
 
 
