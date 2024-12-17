@@ -106,13 +106,10 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
                 Button(
                     onClick = {
                         coroutineScope.launch {
-                            profileViewModel.logout(context) {
-                                navController.navigate("login") {
-                                    popUpTo("home") { inclusive = true }
-                                }
-                            }
+                            profileViewModel.logout()
                         }
                     },
+
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                     shape = RoundedCornerShape(8.dp)

@@ -5,20 +5,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evelin.data.UserPreferences
+import com.example.evelin.data.UserRepository
+import com.example.evelin.data.pref.UserPreference
 import kotlinx.coroutines.launch
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel (private val repository: UserRepository) : ViewModel() {
     private val _text = MutableLiveData<String>().apply {
         value = "This is profile Fragment"
     }
     val text: LiveData<String> = _text
 
-    fun logout(context: Context, onSuccess:()->Unit) {
+    fun logout() {
         viewModelScope.launch {
-            UserPreferences.clearToken(context)
-            UserPreferences.saveLoginStatus(context, false)
-            onSuccess()
+            repository.logout()
         }
     }
 }

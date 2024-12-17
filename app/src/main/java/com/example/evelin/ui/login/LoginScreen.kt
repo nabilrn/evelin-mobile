@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -21,6 +22,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evelin.R
+import com.example.evelin.ViewModelFactory
+import com.example.evelin.data.pref.UserModel
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 
@@ -28,7 +31,8 @@ import com.example.evelin.ui.theme.LightGreen
 fun LoginScreen(context: Context, navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val loginViewModel: LoginViewModel = viewModel()
+    val loginViewModel: LoginViewModel = viewModel(factory = ViewModelFactory.getInstance(context))
+
     var loginResult by remember { mutableStateOf<Boolean?>(null) }
 
     Column(
@@ -94,17 +98,12 @@ fun LoginScreen(context: Context, navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        val loginState by loginViewModel.loginResult.observeAsState()
+
         // Sign In Button
         Button(
             onClick = {
-                loginViewModel.login(context, email, password) { success ->
-                    loginResult = success
-                    if (success) {
-                        navController.navigate("home") {
-                            popUpTo("login") { inclusive = true }
-                        }
-                    }
-                }
+                loginViewModel.login(email, password)
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Green), // Green Button
             modifier = Modifier
@@ -113,6 +112,27 @@ fun LoginScreen(context: Context, navController: NavController) {
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(text = "Sign In", color = Color.White, fontSize = 16.sp)
+        }
+
+        LaunchedEffect(loginState) {
+            loginState?.let { result ->
+                result.onSuccess { response ->
+                    // Simpan session pengguna
+                    loginViewModel.saveSession(
+                        UserModel(
+                            token = response.dataUser.token,
+                            isLogin = true
+                        )
+                    )
+
+                    // Navigasi ke halaman home
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }.onFailure {
+                    // Tangani kesalahan login (misalnya, tampilkan Snackbar)
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
