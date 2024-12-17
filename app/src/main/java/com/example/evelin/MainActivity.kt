@@ -11,13 +11,15 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import com.example.evelin.ui.login.LoginScreen
 import com.example.evelin.ui.register.RegisterScreen
 import com.example.evelin.ui.home.HomeScreen
-import com.example.evelin.data.UserPreferences
+import com.example.evelin.data.pref.UserPreference
+import com.example.evelin.data.pref.dataStore
 import com.example.evelin.ui.addEvent.AddEventScreen
 import com.example.evelin.ui.eventDetail.EventDetailsScreen
 import com.example.evelin.ui.history.EventHistoryScreen
@@ -42,20 +44,12 @@ class MainActivity : ComponentActivity() {
 fun EvelinApp() {
     val navController = rememberNavController()
     val context = LocalContext.current
+    val userPreference = UserPreference.getInstance(context.dataStore)
+    val userSession = userPreference.getSession().collectAsState(initial = null)
+    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        val token = UserPreferences.getToken(context).first()
-        val isLoggedIn = UserPreferences.isLoggedIn(context)
-        if (token != null) {
-            UserPreferences.saveLoginStatus(context, true)
-        }
-        Log.d("EvelinApp", "Token: $token, isLoggedIn: $isLoggedIn")
-    }
-
-    val isLoggedIn = remember { UserPreferences.isLoggedIn(context) }
-    Log.d("EvelinApp", "isLoggedIn: $isLoggedIn")
-
-    LaunchedEffect(isLoggedIn) {
+    LaunchedEffect(userSession.value) {
+        val isLoggedIn = userSession.value?.isLogin == true
         if (isLoggedIn) {
             navController.navigate("home") {
                 popUpTo("login") { inclusive = true }
@@ -65,10 +59,10 @@ fun EvelinApp() {
                 popUpTo("home") { inclusive = true }
             }
         }
+        Log.d("EvelinApp", "isLoggedIn: $isLoggedIn")
     }
 
-
-    AnimatedNavHost(navController = navController, startDestination = if (isLoggedIn) "home" else "login") {
+    AnimatedNavHost(navController = navController, startDestination = if (userSession.value?.isLogin == true) "home" else "login") {
         composable(
             "login",
             enterTransition = { fadeIn() },
