@@ -24,6 +24,7 @@ import com.example.evelin.R
 import com.example.evelin.ui.component.utils.UploadMedia
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
+import androidx.compose.material3.TextFieldDefaults
 
 @Composable
 fun RegisterEventScreen(onBackClick: () -> Unit = {}) {
@@ -130,16 +131,16 @@ fun InputField(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             trailingIcon = trailingIcon,
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Green,
                 unfocusedIndicatorColor = Color.Gray,
-                containerColor = LightGreen
+                focusedContainerColor = LightGreen,
+                unfocusedContainerColor = LightGreen
             )
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
 }
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewRegisterEventScreen() {

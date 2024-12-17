@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Evelin"
 include(":app")
- 

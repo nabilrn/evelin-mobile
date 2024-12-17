@@ -14,11 +14,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evelin.ui.component.utils.DatePickerField
@@ -110,6 +112,7 @@ fun AddEventScreen(navController: NavController) {
 fun InputField(
     label: String,
     value: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
     trailingIcon: @Composable (() -> Unit)? = null,
     onValueChange: (String) -> Unit
 ) {
@@ -128,11 +131,13 @@ fun InputField(
                 .fillMaxWidth()
                 .background(LightGreen, RoundedCornerShape(8.dp)),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             trailingIcon = trailingIcon,
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Green,
                 unfocusedIndicatorColor = Color.Gray,
-                containerColor = LightGreen
+                focusedContainerColor = LightGreen,
+                unfocusedContainerColor = LightGreen
             )
         )
     }
