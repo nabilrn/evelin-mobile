@@ -23,6 +23,7 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel() {
             try {
                 val response = repository.login(email, password)
                 _loginResult.value = Result.success(response)
+
             } catch (e: Exception) {
                 _loginResult.value = Result.failure(e)
             } finally {

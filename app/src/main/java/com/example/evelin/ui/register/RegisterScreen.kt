@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
@@ -16,16 +17,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evelin.R
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 
 @Composable
-fun RegisterScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController, registerViewModel : RegisterViewModel = RegisterViewModel()) {
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    var phoneNumber by remember { mutableStateOf("") }
+    var institute by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -81,6 +87,34 @@ fun RegisterScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // Phone Number
+        OutlinedTextField(
+            value = phoneNumber ,
+            onValueChange = { phoneNumber = it },
+            label = { Text("Phone Number") },
+            leadingIcon = { Icon(painterResource(id = R.drawable.ic_phone), contentDescription = "Phone Number") }, // Replace
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+
+
+        // Institute
+        OutlinedTextField(
+            value = institute ,
+            onValueChange = { institute = it },
+            label = { Text("Institute") },
+            leadingIcon = { Icon(painterResource(id = R.drawable.ic_institute), contentDescription = "Institute") }, // Replace
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         // Password Input
         OutlinedTextField(
             value = password,
@@ -111,7 +145,21 @@ fun RegisterScreen(navController: NavController) {
 
         // Sign Up Button
         Button(
-            onClick = { /* Handle Sign Up */ },
+            onClick = {
+                registerViewModel.register(
+                    context = context,
+                    name = fullName,
+                    email = email,
+                    phone = phoneNumber,
+                    institute = institute,
+                    password = password,
+                    passwordConfirmation = confirmPassword
+                ) { success ->
+                    if (success) {
+                        navController.navigate("login")
+                    }
+                }
+            },
             colors = ButtonDefaults.buttonColors(backgroundColor = Green), // Green Button
             modifier = Modifier
                 .fillMaxWidth()
@@ -167,7 +215,6 @@ fun RegisterScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen(
-        navController = TODO()
-    )
+    val navController = rememberNavController()
+    RegisterScreen(navController = navController)
 }
