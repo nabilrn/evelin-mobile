@@ -21,7 +21,7 @@ class LoginViewModel : ViewModel() {
                 // Tambahkan log untuk cek response
                 println("Login response: $response")
 
-                UserPreferences.saveToken(context, response.data.token)
+                UserPreferences.saveToken(context, response.data.token.toString())
                 UserPreferences.saveLoginStatus(context, true)
                 onResult(true)
             } catch (e: Exception) {

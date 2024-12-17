@@ -14,27 +14,15 @@ data class LoginResponse(
 	val message: String
 )
 
-data class User(
-
-	@field:SerializedName("id")
-	val id: Int,
-
-	@field:SerializedName("email")
-	val email: String
-)
-
-data class Data(
-
-	@field:SerializedName("user")
-	val user: User,
-
-	@field:SerializedName("token")
-	val token: String,
-
-	@field:SerializedName("refreshToken")
-	val refreshToken: String
-)
 data class LogoutResponse(
 	@SerializedName("success") val success: Boolean,
 	@SerializedName("message") val message: String
+)
+
+data class UserResponse(
+	@SerializedName("id") val id: Int,
+	@SerializedName("name") val name: String,
+	@SerializedName("email") val email: String,
+	@SerializedName("noHp") val noHp: String,
+	@SerializedName("institusi") val institusi: String
 )
