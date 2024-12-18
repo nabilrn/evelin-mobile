@@ -1,14 +1,19 @@
 package com.example.evelin.data
 
+import android.util.Log
 import com.example.evelin.data.pref.UserModel
 import com.example.evelin.data.pref.UserPreference
 
 import com.example.evelin.data.remote.ApiService
 import com.example.evelin.data.request.LoginRequest
 import com.example.evelin.data.request.RegisterRequest
+import com.example.evelin.data.response.AddEventResponse
 import com.example.evelin.data.response.DataUser
+import com.example.evelin.data.response.EventResponse
 import com.example.evelin.data.response.EventsResponse
 import com.example.evelin.data.response.LoginResponse
+import com.example.evelin.data.response.LoginUser
+import com.example.evelin.data.response.RegisterEventResponse
 import com.example.evelin.data.response.RegisterResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -40,8 +45,12 @@ class UserRepository private constructor(
     }
 
     private fun getToken(): String {
+        val user = runBlocking { userPreference.getSession().first() }
+        Log.d("UserRepository", "Token: ${user.token}")
         return runBlocking { userPreference.getSession().first().token }
     }
+
+
     suspend fun register(request: RegisterRequest): RegisterResponse {
         return try {
             apiService.register(request)
@@ -51,10 +60,12 @@ class UserRepository private constructor(
     }
 
 
-    suspend fun getUser(): DataUser {
+    suspend fun getUser(): LoginUser {
         val token = getToken()
         try {
-            return apiService.getUser("Bearer $token").dataUser
+            val dataUser = apiService.getUser("Bearer $token").data
+            Log.d("UserRepository", "User data: $dataUser")
+            return apiService.getUser("Bearer $token").data
         } catch (e: HttpException) {
             if (e.code() == 401) {
                 logout()
@@ -82,10 +93,27 @@ class UserRepository private constructor(
         }
     }
 //
-//    suspend fun getMeasure(id: String): MeasureResponse {
-//        val token = getToken()
-//        return apiService.getMeasure("Bearer $token", id)
-//    }
+    suspend fun getEvent(id: String): EventResponse {
+        val token = getToken()
+        return apiService.getEvent("Bearer $token", id)
+    }
+
+    suspend fun submitEventRegistration(eventId: String): RegisterEventResponse {
+        val token = getToken()
+        return apiService.registerEvent("Bearer $token", eventId)
+    }
+
+    suspend fun addEvent(
+        title: RequestBody,
+        description: RequestBody,
+        eventDate: RequestBody,
+        location: RequestBody,
+        category: RequestBody,
+        posterUrl: MultipartBody.Part
+    ): AddEventResponse {
+        val token = getToken()
+        return apiService.addEvent("Bearer $token", title, description, eventDate, location,category, posterUrl)
+    }
 //
 //    suspend fun addMeasure(
 //        baby_photo_url: MultipartBody.Part,

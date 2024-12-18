@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.evelin.R
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberImagePainter
 import com.example.evelin.ViewModelFactory
 import com.example.evelin.data.response.DataItem
 
@@ -46,10 +47,10 @@ fun HomeScreen(
             items(events) { event ->
                 EventItem(
                     navController = navController,
+                    eventId = event.id.toString(),  // Pass the event ID
                     eventName = event.title ?: "Unnamed Event",
                     eventDescription = event.description ?: "No description",
-                    // Assume you have a way to load image from URL or use a placeholder
-                    eventImage = painterResource(id = R.drawable.foto_seminar)
+                    eventImage = rememberImagePainter(data = event.posterUrl)
                 )
             }
         }
@@ -66,10 +67,11 @@ fun HomeScreen(
             items(events) { event ->
                 EventItem(
                     navController = navController,
+                    eventId = event.id.toString(),  // Pass the event ID
                     eventName = event.title ?: "Unnamed Event",
                     eventDescription = event.description ?: "No description",
-                    // Assume you have a way to load image from URL or use a placeholder
-                    eventImage = painterResource(id = R.drawable.foto_seminar)
+                    eventImage = event.posterUrl?.let { rememberImagePainter(data = it) }
+                        ?: painterResource(id = R.drawable.foto_seminar)
                 )
             }
         }

@@ -19,8 +19,17 @@ import androidx.navigation.compose.rememberNavController
 import com.example.evelin.R
 
 @Composable
-fun EventItem(navController: NavController, eventName: String, eventDescription: String, eventImage: Painter) {
+fun EventItem(
+    navController: NavController,
+    eventId: String,  // Add this parameter
+    eventName: String,
+    eventDescription: String,
+    eventImage: Painter
+) {
     Card(
+        onClick = {
+            navController.navigate("eventDetail/$eventId")  // Use the exact route with ID
+        },
         modifier = Modifier
             .padding(8.dp)
             .size(200.dp)
@@ -52,15 +61,3 @@ fun EventItem(navController: NavController, eventName: String, eventDescription:
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun EventItemPreview() {
-    // Use a dummy NavController for preview
-    val navController = rememberNavController()
-    EventItem(
-        navController = navController,
-        eventName = "Sample Event",
-        eventDescription = "This is a description of the sample event.",
-        eventImage = painterResource(id = R.drawable.foto_seminar)
-    )
-}

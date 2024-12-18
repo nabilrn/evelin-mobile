@@ -2,10 +2,24 @@ package com.example.evelin.data.response
 
 import com.google.gson.annotations.SerializedName
 
+
+
 data class EventsResponse(
 
 	@field:SerializedName("data")
 	val data: List<DataItem?>? = null,
+
+	@field:SerializedName("error")
+	val error: Boolean? = null,
+
+	@field:SerializedName("message")
+	val message: String? = null
+)
+
+data class EventResponse(
+
+	@field:SerializedName("data")
+	val data: DataItem? = null,
 
 	@field:SerializedName("error")
 	val error: Boolean? = null,

@@ -12,20 +12,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.evelin.R
+import com.example.evelin.ViewModelFactory
+import com.example.evelin.ui.home.HomeViewModel
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 
 @Composable
-fun EventDetailsScreen(navController: NavController) {
+fun EventDetailsScreen(navController: NavController,    eventId: String?,
+
+                       viewModel: EventDetailViewModel = viewModel(factory = ViewModelFactory.getInstance(
+                           LocalContext.current))
+) {
+
+    LaunchedEffect(eventId) {
+        eventId?.let {
+            viewModel.getEvent(it)
+        }
+    }
+
+    val event by viewModel.events.collectAsState() // Observe events from ViewModel
+
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -33,7 +51,7 @@ fun EventDetailsScreen(navController: NavController) {
             .verticalScroll(scrollState)
     ) {
         // Header Image
-        HeaderImage()
+        HeaderImage(event?.posterUrl)
 
         // Event Content
         Column(
@@ -43,7 +61,7 @@ fun EventDetailsScreen(navController: NavController) {
         ) {
             // Title
             Text(
-                text = "Transformasi Digital di Era Industri 4.0",
+                text = event?.title ?: "Event Title",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
@@ -55,7 +73,7 @@ fun EventDetailsScreen(navController: NavController) {
             // Event Date
             EventInfoRow(
                 icon = painterResource(id = R.drawable.ic_calendar),
-                title = "19 Oktober, 2024",
+                title = event?.eventDate ?: "Event Date",
                 subtitle = "Saturday, 8:00AM - 10:30AM"
             )
 
@@ -64,7 +82,7 @@ fun EventDetailsScreen(navController: NavController) {
             // Event Location
             EventInfoRow(
                 icon = painterResource(id = R.drawable.ic_location),
-                title = "Auditorium Universitas Andalas",
+                title = event?.location ?: "Event Location",
                 subtitle = "Limau Manis, Kec. Pauh, Kota Padang, Sumatera Barat 25175"
             )
 
@@ -88,7 +106,7 @@ fun EventDetailsScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Pelajari bagaimana teknologi mengubah dunia kerja, dapatkan wawasan dari para ahli, dan siapkan dirimu untuk bersaing di era digital. Jangan lewatkan kesempatan ini untuk mempersiapkan masa depanmu!",
+                text = event?.description ?: "Event Description",
                 fontSize = 14.sp,
                 color = Color.Gray
             )
@@ -96,7 +114,7 @@ fun EventDetailsScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
 
             // Register Button
-            RegisterButton(navController)
+            RegisterButton(navController, eventId)
             Spacer(modifier = Modifier.height(16.dp))
             CancelButton(navController = navController) // Pass navController here
 
@@ -105,8 +123,12 @@ fun EventDetailsScreen(navController: NavController) {
 }
 
 @Composable
-fun HeaderImage() {
-    val image: Painter = painterResource(id = R.drawable.foto_seminar) // Replace with your image resource
+fun HeaderImage(posterUrl: String?) {
+    val image: Painter = if (posterUrl != null) {
+        rememberAsyncImagePainter(posterUrl)
+    } else {
+        painterResource(id = R.drawable.foto_seminar) // Replace with default image
+    }
     Image(
         painter = image,
         contentDescription = "Event Header Image",
@@ -147,9 +169,13 @@ fun EventInfoRow(icon: Painter, title: String, subtitle: String) {
 }
 
 @Composable
-fun RegisterButton(navController: NavController) {
+fun RegisterButton(navController: NavController, eventId: String?) {
     Button(
-        onClick = { navController.navigate("registerEvent") },
+        onClick = {
+            eventId?.let {
+                navController.navigate("registerEvent/$it")
+            }
+        },
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF26A541)),
         modifier = Modifier
@@ -184,11 +210,4 @@ fun CancelButton(navController: NavController) {
             textAlign = TextAlign.Center
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewEventDetailsScreen() {
-    val navController = rememberNavController()
-    EventDetailsScreen(navController = navController)
 }

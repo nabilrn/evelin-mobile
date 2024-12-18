@@ -14,7 +14,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.evelin.ui.login.LoginScreen
 import com.example.evelin.ui.register.RegisterScreen
 import com.example.evelin.ui.home.HomeScreen
@@ -99,14 +101,24 @@ fun EvelinApp() {
             exitTransition = { fadeOut() }
         ) { EventHistoryScreen(onBackClick = { navController.popBackStack() }) }
         composable(
-            "eventDetails",
+            "eventDetail/{id}",  // Ensure this matches exactly
+            arguments = listOf(navArgument("id") { type = NavType.StringType }),
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() }
-        ) { EventDetailsScreen(navController = navController) }
+        ) { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("id")
+            EventDetailsScreen(navController = navController, eventId = eventId)
+        }
         composable(
-            "registerEvent",
+            "registerEvent/{eventId}",
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() }
-        ) { RegisterEventScreen(onBackClick = { navController.popBackStack() }) }
+        ) { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("eventId")
+            RegisterEventScreen(
+                onBackClick = { navController.popBackStack() },
+                eventId = eventId
+            )
+        }
     }
 }

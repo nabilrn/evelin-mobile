@@ -2,7 +2,14 @@
 
 package com.example.evelin.ui.addEvent
 
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -18,28 +25,52 @@ import androidx.compose.foundation.text.KeyboardOptions
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.evelin.ui.component.utils.DatePickerField
 import com.example.evelin.ui.component.utils.UploadMedia
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 import com.example.evelin.R
+import com.example.evelin.ViewModelFactory
+import com.example.evelin.ui.eventDetail.EventDetailViewModel
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 @Composable
-fun AddEventScreen(navController: NavController) {
+fun AddEventScreen(navController: NavController,
+                   viewModel: AddEventViewModel = viewModel(factory = ViewModelFactory.getInstance(
+                       LocalContext.current))
+) {
     var judulAcara by remember { mutableStateOf("") }
     var deskripsiAcara by remember { mutableStateOf("") }
     var tanggalWaktu by remember { mutableStateOf("") }
     var lokasi by remember { mutableStateOf("") }
     var kategoriAcara by remember { mutableStateOf("") }
-    var pembicara by remember { mutableStateOf("") }
-    var insert by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
+    // Image picker launcher
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,6 +79,7 @@ fun AddEventScreen(navController: NavController) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Back navigation row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -78,20 +110,102 @@ fun AddEventScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Input Fields
         InputField(label = "Judul Acara*", value = judulAcara) { judulAcara = it }
         InputField(label = "Deskripsi Acara*", value = deskripsiAcara) { deskripsiAcara = it }
         DatePickerField(label = "Tanggal & Waktu*", selectedDate = tanggalWaktu) { tanggalWaktu = it }
         InputField(label = "Lokasi*", value = lokasi) { lokasi = it }
         InputField(label = "Kategori Acara*", value = kategoriAcara) { kategoriAcara = it }
-        InputField(label = "Pembicara/Guest Star (Opsional)", value = pembicara) { pembicara = it }
-        InputField(label = "Insert (Opsional)", value = insert) { insert = it }
 
-        UploadMedia()
+        // Image Upload Section
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Upload Poster",
+            color = Color.Black,
+            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 14.sp
+        )
+
+        // Image Preview and Upload Button
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(LightGreen, RoundedCornerShape(8.dp))
+                .clickable { imagePickerLauncher.launch("image/*") }
+        ) {
+            if (imageUri != null) {
+                // Show image preview
+                Image(
+                    painter = rememberAsyncImagePainter(model = imageUri),
+                    contentDescription = "Event Poster",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                // Placeholder when no image is selected
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_upload),
+                        contentDescription = "Upload Icon",
+                        tint = Green
+                    )
+                    Text(
+                        text = "Tap to Upload Poster",
+                        color = Green,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
+
+        fun Uri.getFilePathFromUri(context: Context): File? {
+            return try {
+                val inputStream = context.contentResolver.openInputStream(this)
+                val tempFile = File.createTempFile("upload", ".jpg", context.cacheDir)
+                tempFile.deleteOnExit()
+                inputStream?.use { input ->
+                    tempFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                tempFile
+            } catch (e: Exception) {
+                Log.e("FileUpload", "Error converting URI to File", e)
+                null
+            }
+        }
+        // Publish Button
         Button(
-            onClick = { /* Handle publish logic */ },
+            onClick = {
+
+                val posterPart = imageUri.let { uri ->
+                    val file = File(uri?.path ?: "")
+                    val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+                    MultipartBody.Part.createFormData("posterFile", file.name, requestBody)
+                }
+
+                viewModel.viewModelScope.launch {
+                    viewModel.addEvent(
+                        title = judulAcara.toRequestBody(),
+                        description = deskripsiAcara.toRequestBody(),
+                        eventDate = tanggalWaktu.toRequestBody(),
+                        location = lokasi.toRequestBody(),
+                        category = kategoriAcara.toRequestBody(),
+                        posterUrl = posterPart
+                    )
+                    navController.popBackStack()
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth(0.6f)
                 .height(50.dp),
@@ -107,6 +221,7 @@ fun AddEventScreen(navController: NavController) {
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputField(

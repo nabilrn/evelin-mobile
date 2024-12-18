@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class RegisterEventResponse(
 
 	@field:SerializedName("data")
-	val data: Data? = null,
+	val data: DataRegEvent? = null,
 
 	@field:SerializedName("error")
 	val error: Boolean? = null,
@@ -14,22 +14,9 @@ data class RegisterEventResponse(
 	val message: String? = null
 )
 
-data class UpdatedAt(
 
-	@field:SerializedName("val")
-	val val: String? = null
-)
 
-data class CreatedAt(
-
-	@field:SerializedName("val")
-	val val: String? = null
-)
-
-data class Data(
-
-	@field:SerializedName("createdAt")
-	val createdAt: CreatedAt? = null,
+data class DataRegEvent(
 
 	@field:SerializedName("eventId")
 	val eventId: String? = null,
@@ -40,6 +27,5 @@ data class Data(
 	@field:SerializedName("userId")
 	val userId: Int? = null,
 
-	@field:SerializedName("updatedAt")
-	val updatedAt: UpdatedAt? = null
+
 )
