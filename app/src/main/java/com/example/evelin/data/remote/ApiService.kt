@@ -61,8 +61,7 @@ interface ApiService {
         @Part("eventDate") eventDate: RequestBody?,
         @Part("location") location: RequestBody?,
         @Part("category") category: RequestBody?,
-        @Part posterUrl: MultipartBody.Part,
-
+        @Part posterUrl: MultipartBody.Part
     ): AddEventResponse
 
 }

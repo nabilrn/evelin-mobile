@@ -95,9 +95,14 @@ class UserRepository private constructor(
 //
     suspend fun getEvent(id: String): EventResponse {
         val token = getToken()
-        return apiService.getEvent("Bearer $token", id)
+        Log.d("UserRepository", "Fetching event with id: $id and token: $token")
+        return try {
+            apiService.getEvent("Bearer $token", id)
+        } catch (e: HttpException) {
+            Log.e("UserRepository", "HTTP error: ${e.code()} - ${e.message()}")
+            throw e
+        }
     }
-
     suspend fun submitEventRegistration(eventId: String): RegisterEventResponse {
         val token = getToken()
         return apiService.registerEvent("Bearer $token", eventId)
@@ -105,14 +110,14 @@ class UserRepository private constructor(
 
     suspend fun addEvent(
         title: RequestBody,
-        description: RequestBody,
-        eventDate: RequestBody,
-        location: RequestBody,
-        category: RequestBody,
+        description: RequestBody?,
+        eventDate: RequestBody?,
+        location: RequestBody?,
+        category: RequestBody?,
         posterUrl: MultipartBody.Part
     ): AddEventResponse {
-        val token = getToken()
-        return apiService.addEvent("Bearer $token", title, description, eventDate, location,category, posterUrl)
+        val token = getToken() // Assume you have a method to get the stored token
+        return apiService.addEvent("Bearer $token", title, description, eventDate, location, category, posterUrl)
     }
 //
 //    suspend fun addMeasure(
