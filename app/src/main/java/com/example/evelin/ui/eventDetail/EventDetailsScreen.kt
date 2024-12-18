@@ -15,9 +15,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -60,7 +60,7 @@ fun EventDetailsScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = eventData.title ?: "Event Title",
+                    text = eventData.title ?: "",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
@@ -71,24 +71,21 @@ fun EventDetailsScreen(
 
                 EventInfoRow(
                     icon = painterResource(id = R.drawable.ic_calendar),
-                    title = eventData.eventDate ?: "Event Date",
-                    subtitle = "Saturday, 8:00AM - 10:30AM"
+                    title = eventData.eventDate ?: ""
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 EventInfoRow(
                     icon = painterResource(id = R.drawable.ic_location),
-                    title = eventData.location ?: "Event Location",
-                    subtitle = "Limau Manis, Kec. Pauh, Kota Padang, Sumatera Barat 25175"
+                    title = eventData.location ?: ""
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 EventInfoRow(
                     icon = painterResource(id = R.drawable.ic_organizer),
-                    title = eventData.university ?: "Organizer",
-                    subtitle = "+6281286823201"
+                    title = eventData.university ?: ""
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -101,7 +98,7 @@ fun EventDetailsScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = eventData.description ?: "Event Description",
+                    text = eventData.description ?: "",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -143,7 +140,7 @@ fun HeaderImage(posterUrl: String?) {
 }
 
 @Composable
-fun EventInfoRow(icon: Painter, title: String, subtitle: String) {
+fun EventInfoRow(icon: Painter, title: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -155,19 +152,12 @@ fun EventInfoRow(icon: Painter, title: String, subtitle: String) {
                 .size(32.dp)
                 .padding(end = 8.dp)
         )
-        Column {
-            Text(
-                text = title,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            Text(
-                text = subtitle,
-                fontSize = 12.sp,
-                color = Color.Gray
-            )
-        }
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
     }
 }
 
