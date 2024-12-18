@@ -22,6 +22,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -75,6 +76,7 @@ interface ApiService {
     ): HistoryResponse
 
 
+
     @GET("/myEvents")
     suspend fun getMyEvent(
         @Header("Authorization") token: String
@@ -86,5 +88,12 @@ interface ApiService {
         @Path("id") eventId: String,
         @Body request: UpdateEventRequest
     ): EventResponse
+
+    @GET("/searchEvent")
+    suspend fun searchEvents(
+        @Header("Authorization") token: String,
+        @Query("query") query: String
+    ): EventsResponse
+
 }
 

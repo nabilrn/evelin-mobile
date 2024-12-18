@@ -28,6 +28,8 @@ import com.example.evelin.ui.editEvent.EditEventScreen
 import com.example.evelin.ui.eventDetail.EventDetailsScreen
 import com.example.evelin.ui.history.EventHistoryScreen
 import com.example.evelin.ui.myEvent.MyEventScreen
+import com.example.evelin.ui.home.SearchResultsScreen
+
 import com.example.evelin.ui.profile.ProfileScreen
 import com.example.evelin.ui.registerEvent.RegisterEventScreen
 import com.example.evelin.ui.userInfo.UserInfoScreen
@@ -151,6 +153,10 @@ fun EvelinApp() {
                 eventId = eventId,
                 navController = navController
             )
+        }
+        composable("searchResults/{query}") { backStackEntry ->
+            val query = backStackEntry.arguments?.getString("query") ?: ""
+            SearchResultsScreen(navController = navController, query = query)
         }
     }
 }

@@ -124,13 +124,13 @@ fun EventDetailsScreen(
 
 @Composable
 fun HeaderImage(posterUrl: String?) {
-    val image: Painter = if (posterUrl != null) {
-        rememberAsyncImagePainter(posterUrl)
-    } else {
-        painterResource(id = R.drawable.foto_seminar)
-    }
+    val painter = rememberAsyncImagePainter(
+        model = posterUrl,
+        placeholder = painterResource(id = R.drawable.image_example),
+        error = painterResource(id = R.drawable.foto_seminar)
+    )
     Image(
-        painter = image,
+        painter = painter,
         contentDescription = "Event Header Image",
         contentScale = ContentScale.Crop,
         modifier = Modifier
@@ -138,7 +138,6 @@ fun HeaderImage(posterUrl: String?) {
             .height(200.dp)
     )
 }
-
 @Composable
 fun EventInfoRow(icon: Painter, title: String) {
     Row(
