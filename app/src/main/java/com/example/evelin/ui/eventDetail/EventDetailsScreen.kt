@@ -114,7 +114,7 @@ fun EventDetailsScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                RegisterButton(navController, eventId, eventData.isRegistered == 1)
+                RegisterButton(navController, eventId, eventData.isRegistered == 1, viewModel)
                 Spacer(modifier = Modifier.height(16.dp))
                 CancelButton(navController = navController)
             }
@@ -161,11 +161,12 @@ fun EventInfoRow(icon: Painter, title: String) {
 }
 
 @Composable
-fun RegisterButton(navController: NavController, eventId: String?, isRegistered: Boolean) {
+fun RegisterButton(navController: NavController, eventId: String?, isRegistered: Boolean, viewModel: EventDetailViewModel) {
     Button(
         onClick = {
             eventId?.let {
                 navController.navigate("registerEvent/$it")
+                viewModel.refreshEvent(it) // Refresh event data after registration
             }
         },
         shape = RoundedCornerShape(8.dp),

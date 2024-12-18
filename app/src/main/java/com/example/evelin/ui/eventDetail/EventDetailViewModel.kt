@@ -21,12 +21,17 @@ class EventDetailViewModel(private val repository: UserRepository) : ViewModel()
             try {
                 Log.d("EventDetailViewModel", "Fetching event with id: $id")
                 val response = withContext(Dispatchers.IO) { repository.getEvent(id) }
-                Log.d("EventDetailViewModel", "Event fetched: ${response.data.event}")
-                _events.value = response.data.event
+                val event = response.data.event.copy(isRegistered = response.data.isRegistered)
+                Log.d("EventDetailViewModel", "Event fetched: $event")
+                _events.value = event
             } catch (e: Exception) {
                 Log.e("EventDetailViewModel", "Error fetching event: ${e.message}", e)
                 _events.value = null // Set null if an error occurs
             }
         }
+    }
+
+    fun refreshEvent(id: String) {
+        getEvent(id)
     }
 }

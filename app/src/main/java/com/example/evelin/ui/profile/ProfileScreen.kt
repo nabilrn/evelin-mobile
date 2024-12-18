@@ -34,6 +34,7 @@ import com.example.evelin.R
 import com.example.evelin.ViewModelFactory
 import com.example.evelin.ui.addEvent.AddEventViewModel
 import com.example.evelin.ui.theme.Green
+import com.example.evelin.ui.theme.LightGreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -82,7 +83,7 @@ fun ProfileScreen(navController: NavController,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.image_example), // Gambar profil
+                    painter = painterResource(id = R.drawable.file), // Gambar profil
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .size(100.dp)
@@ -142,10 +143,10 @@ fun ProfileScreen(navController: NavController,
                     },
 
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Green),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = LightGreen),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Logout", color = Color.White)
+                    Text("Logout", color = Green)
                 }
             }
         }
