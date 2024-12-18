@@ -11,6 +11,7 @@ import com.example.evelin.data.response.AddEventResponse
 import com.example.evelin.data.response.DataUser
 import com.example.evelin.data.response.EventResponse
 import com.example.evelin.data.response.EventsResponse
+import com.example.evelin.data.response.HistoryResponse
 import com.example.evelin.data.response.LoginResponse
 import com.example.evelin.data.response.LoginUser
 import com.example.evelin.data.response.RegisterEventResponse
@@ -96,6 +97,20 @@ class UserRepository private constructor(
     suspend fun getEvent(id: String): EventResponse {
         val token = getToken()
         return apiService.getEvent("Bearer $token", id)
+    }
+
+    suspend fun getHistory(): HistoryResponse {
+        val token = getToken()
+        try {
+            return apiService.getHistory("Bearer $token")
+        } catch (e: HttpException) {
+            if (e.code() == 401) {
+                logout()
+                throw e
+            } else {
+                throw e
+            }
+        }
     }
 
     suspend fun submitEventRegistration(eventId: String): RegisterEventResponse {

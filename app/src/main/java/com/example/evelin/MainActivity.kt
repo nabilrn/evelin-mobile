@@ -22,6 +22,7 @@ import com.example.evelin.ui.register.RegisterScreen
 import com.example.evelin.ui.home.HomeScreen
 import com.example.evelin.data.pref.UserPreference
 import com.example.evelin.data.pref.dataStore
+import com.example.evelin.ui.PusherService
 import com.example.evelin.ui.addEvent.AddEventScreen
 import com.example.evelin.ui.eventDetail.EventDetailsScreen
 import com.example.evelin.ui.history.EventHistoryScreen
@@ -33,11 +34,24 @@ import com.google.accompanist.navigation.animation.composable
 import kotlinx.coroutines.flow.first
 
 class MainActivity : ComponentActivity() {
+    private lateinit var pusherService: PusherService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize Pusher service
+        pusherService = PusherService(this)
+        pusherService.initialize()
+
         setContent {
             EvelinApp()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Disconnect Pusher when the app is closed
+        pusherService.disconnect()
     }
 }
 
@@ -99,7 +113,7 @@ fun EvelinApp() {
             "eventHistory",
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() }
-        ) { EventHistoryScreen(onBackClick = { navController.popBackStack() }) }
+        ) { EventHistoryScreen(navController = navController, onBackClick = { navController.popBackStack() }) }
         composable(
             "eventDetail/{id}",  // Ensure this matches exactly
             arguments = listOf(navArgument("id") { type = NavType.StringType }),

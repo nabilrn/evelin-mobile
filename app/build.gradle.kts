@@ -77,6 +77,7 @@ dependencies {
     ksp(libs.hilt.compiler.v2511)
 
     implementation ("io.coil-kt:coil-compose:2.2.2")
+    implementation ("com.pusher:pusher-java-client:2.2.1")
 
 
     // KSP

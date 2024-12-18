@@ -9,9 +9,16 @@ import androidx.compose.foundation.text.ClickableText
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -19,13 +26,39 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.evelin.R
+import com.example.evelin.ViewModelFactory
+import com.example.evelin.ui.profile.ProfileViewModel
 import com.example.evelin.ui.theme.Blue
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 
 @Composable
-fun UserInfoScreen(onBackClick: () -> Unit) {
+fun UserInfoScreen(onBackClick: () -> Unit,viewModel: UserInfoViewModel = viewModel(factory = ViewModelFactory.getInstance(
+    LocalContext.current))
+) {
+
+    val userData by viewModel.user.collectAsState()
+
+
+    viewModel.fetchUser()
+
+
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var noHp by remember { mutableStateOf("") }
+    var institusi by remember { mutableStateOf("") }
+
+    LaunchedEffect(userData) {
+        name = userData?.name ?: ""
+        email = userData?.email ?: ""
+        noHp = userData?.noHp ?: ""
+        institusi = userData?.institusi ?: ""
+    }
+
+
+
     Scaffold(
         backgroundColor = Color.White
     ) { paddingValues ->
@@ -78,16 +111,10 @@ fun UserInfoScreen(onBackClick: () -> Unit) {
                     .padding(16.dp)
             ) {
                 Column {
-                    ProfileInfoItem(label = "Full Name", value = "Nabillah R. Dzakira")
-                    ProfileInfoItem(label = "Nick Name", value = "Nabillah")
-                    ProfileInfoItem(label = "Email", value = "nbilardzkr20@gmail.com", isLink = true)
-                    ProfileInfoItem(
-                        label = "Password",
-                        value = "**********",
-                        changeAction = "Change password"
-                    )
-                    ProfileInfoItem(label = "Nomor Telepon", value = "+6281286823201")
-                    ProfileInfoItem(label = "Asal Institusi", value = "Universitas Andalas")
+                    ProfileInfoItem(label = "Full Name", value = name)
+                    ProfileInfoItem(label = "Email", value = email, isLink = true)
+                    ProfileInfoItem(label = "Nomor Telepon", value = noHp)
+                    ProfileInfoItem(label = "Asal Institusi", value = institusi)
                 }
             }
         }

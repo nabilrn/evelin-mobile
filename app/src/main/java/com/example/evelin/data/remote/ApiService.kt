@@ -5,6 +5,7 @@ import com.example.evelin.data.request.RegisterRequest
 import com.example.evelin.data.response.AddEventResponse
 import com.example.evelin.data.response.EventResponse
 import com.example.evelin.data.response.EventsResponse
+import com.example.evelin.data.response.HistoryResponse
 import com.example.evelin.data.response.LoginResponse
 import com.example.evelin.data.response.RegisterEventResponse
 import com.example.evelin.data.response.RegisterResponse
@@ -65,5 +66,10 @@ interface ApiService {
 
     ): AddEventResponse
 
+
+    @GET("/history")
+    suspend fun getHistory(
+        @Header("Authorization") token: String
+    ): HistoryResponse
 }
 
