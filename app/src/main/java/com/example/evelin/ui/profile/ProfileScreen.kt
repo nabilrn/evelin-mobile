@@ -9,7 +9,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,12 +32,34 @@ import androidx.navigation.compose.rememberNavController
 import com.example.evelin.ui.component.bar.BottomNavBar
 import com.example.evelin.R
 import com.example.evelin.ViewModelFactory
+import com.example.evelin.ui.addEvent.AddEventViewModel
 import com.example.evelin.ui.theme.Green
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel = viewModel(factory = ViewModelFactory.getInstance(LocalContext.current))) {
-    val context = LocalContext.current
+fun ProfileScreen(navController: NavController,
+                  viewModel: ProfileViewModel = viewModel(factory = ViewModelFactory.getInstance(
+                      LocalContext.current))
+) {
+    val userData by viewModel.user.collectAsState()
+
+
+    viewModel.fetchUser()
+
+
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var noHp by remember { mutableStateOf("") }
+    var institusi by remember { mutableStateOf("") }
+
+    LaunchedEffect(userData) {
+        name = userData?.name ?: ""
+        email = userData?.email ?: ""
+        noHp = userData?.noHp ?: ""
+        institusi = userData?.institusi ?: ""
+    }
+
+
     val coroutineScope = rememberCoroutineScope()
     Log.d("ProfileScreen", "Entering ProfileScreen")
     Scaffold(
@@ -63,13 +91,13 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
                 //name
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Nabillah R. Dzakira",
+                    text = name,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 //email
                 Text(
-                    text = "nbilardzkr20@gmail.com | +6281286823201",
+                    text = "{$email} | ${noHp}",
                     fontSize = 12.sp,
                     color = Color.Gray
                 )
@@ -109,7 +137,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
                 Button(
                     onClick = {
                         coroutineScope.launch {
-                            profileViewModel.logout()
+                            viewModel.logout()
                         }
                     },
 

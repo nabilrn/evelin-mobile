@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler.v2511)
 
+    implementation ("com.pusher:pusher-java-client:2.2.1")
     implementation (libs.coil.compose)
 
 

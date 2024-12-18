@@ -11,20 +11,34 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.evelin.R
+import com.example.evelin.ViewModelFactory
+import com.example.evelin.ui.component.item.EventItem
+import com.example.evelin.ui.home.HomeViewModel
 import com.example.evelin.ui.theme.LightGreen
 
 @Composable
-fun EventHistoryScreen(onBackClick: () -> Unit = {}) {
+fun EventHistoryScreen(onBackClick: () -> Unit = {}, navController: NavController,viewModel: EventHistoryViewModel = viewModel(factory = ViewModelFactory.getInstance(
+    LocalContext.current))
+) {
+
+    val events by viewModel.events.collectAsState()
+
     val activities = listOf(
         "Transformasi Digital di Era Industri 4.0",
         "TECHNOFEST 2024",
@@ -75,9 +89,11 @@ fun EventHistoryScreen(onBackClick: () -> Unit = {}) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            items(activities) { activity ->
-                ActivityRow(title = activity)
+            items(events) { event ->
+
+                ActivityRow(title = event.event.title)
             }
+
         }
     }
 }
@@ -108,8 +124,8 @@ fun ActivityRow(title: String) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewEventHistoryScreen() {
-    EventHistoryScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewEventHistoryScreen() {
+//    EventHistoryScreen()
+//}
