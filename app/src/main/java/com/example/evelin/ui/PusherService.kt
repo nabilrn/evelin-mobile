@@ -17,6 +17,8 @@ import com.pusher.client.channel.Channel
 import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.connection.ConnectionStateChange
+import org.json.JSONException
+import org.json.JSONObject
 
 class PusherService(private val context: Context) {
     private lateinit var pusher: Pusher
@@ -51,7 +53,25 @@ class PusherService(private val context: Context) {
         }, ConnectionState.ALL)
 
         // Subscribe to channel and bind events
-        subscribeToChannel()
+        channel = pusher.subscribe("my-channel")
+
+        // Example of binding to multiple event types
+        channel.bind("my-event") { event ->
+
+            Log.d("PusherService", "Event received: ${event.data}")
+
+            try {
+                // Parse JSON dari event.data
+                val eventData = JSONObject(event.data)
+                val message = eventData.getString("message") // Ambil nilai 'message'
+                val title = eventData.getString("title") // Ambil nilai 'title'
+                // Gunakan message untuk notifikasi
+                showNotification(title, message)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+                showNotification("Event Received", "Data parsing failed")
+            }
+        }
 
         // Initialize permission launcher
         permissionLauncher = (context as MainActivity).registerForActivityResult(
@@ -70,20 +90,7 @@ class PusherService(private val context: Context) {
         }
     }
 
-    private fun subscribeToChannel() {
-        channel = pusher.subscribe("my-channel")
 
-        // Example of binding to multiple event types
-        channel.bind("my-event") { event ->
-            Log.i("Pusher", "Received event with data: $event")
-            showNotification("Event Received", event.toString())
-        }
-
-        channel.bind("notification") { event ->
-            Log.i("Pusher", "Received notification: $event")
-            showNotification("New Notification", event.toString())
-        }
-    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

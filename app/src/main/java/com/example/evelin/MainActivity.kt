@@ -24,9 +24,12 @@ import com.example.evelin.data.pref.UserPreference
 import com.example.evelin.data.pref.dataStore
 import com.example.evelin.ui.PusherService
 import com.example.evelin.ui.addEvent.AddEventScreen
+import com.example.evelin.ui.editEvent.EditEventScreen
 import com.example.evelin.ui.eventDetail.EventDetailsScreen
 import com.example.evelin.ui.history.EventHistoryScreen
+import com.example.evelin.ui.myEvent.MyEventScreen
 import com.example.evelin.ui.home.SearchResultsScreen
+
 import com.example.evelin.ui.profile.ProfileScreen
 import com.example.evelin.ui.registerEvent.RegisterEventScreen
 import com.example.evelin.ui.userInfo.UserInfoScreen
@@ -116,6 +119,11 @@ fun EvelinApp() {
             exitTransition = { fadeOut() }
         ) { EventHistoryScreen(navController = navController, onBackClick = { navController.popBackStack() }) }
         composable(
+            "myEvent",
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() }
+        ) { MyEventScreen(navController = navController, onBackClick = { navController.popBackStack() }) }
+        composable(
             "eventDetail/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType }),
             enterTransition = { fadeIn() },
@@ -123,6 +131,15 @@ fun EvelinApp() {
         ) { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("id")
             EventDetailsScreen(navController = navController, eventId = eventId)
+        }
+        composable(
+            "editEvent/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType }),
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() }
+        ) { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("id")
+            EditEventScreen(navController = navController, eventId = eventId.toString())
         }
         composable(
             "registerEvent/{eventId}",
