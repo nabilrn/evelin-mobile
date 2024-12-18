@@ -2,12 +2,10 @@ package com.example.evelin.data.response
 
 import com.google.gson.annotations.SerializedName
 
-
-
-data class EventsResponse(
+data class AddEventResponse(
 
 	@field:SerializedName("data")
-	val data: List<DataItem?>? = null,
+	val data: DataAddEvent ,
 
 	@field:SerializedName("error")
 	val error: Boolean? = null,
@@ -16,31 +14,15 @@ data class EventsResponse(
 	val message: String? = null
 )
 
-data class EventResponse(
 
-	@field:SerializedName("data")
-	val data: DataItem? = null,
 
-	@field:SerializedName("error")
-	val error: Boolean? = null,
-
-	@field:SerializedName("message")
-	val message: String? = null
-)
-
-data class DataItem(
-
-	@field:SerializedName("createdAt")
-	val createdAt: String? = null,
+data class DataAddEvent(
 
 	@field:SerializedName("posterUrl")
 	val posterUrl: String? = null,
 
 	@field:SerializedName("university")
 	val university: String? = null,
-
-	@field:SerializedName("speaker")
-	val speaker: String? = null,
 
 	@field:SerializedName("description")
 	val description: String? = null,
@@ -60,9 +42,8 @@ data class DataItem(
 	@field:SerializedName("userId")
 	val userId: Int? = null,
 
-	@field:SerializedName("eventDate")
-	val eventDate: String? = null,
 
-	@field:SerializedName("updatedAt")
-	val updatedAt: String? = null
+	@field:SerializedName("eventDate")
+	val eventDate: String? = null
 )
+

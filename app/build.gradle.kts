@@ -76,6 +76,9 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler.v2511)
 
+    implementation ("io.coil-kt:coil-compose:2.2.2")
+
+
     // KSP
     implementation(libs.symbol.processing.api)
 

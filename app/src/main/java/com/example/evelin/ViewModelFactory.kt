@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.evelin.data.UserRepository
 import com.example.evelin.di.Injection
+import com.example.evelin.ui.addEvent.AddEventViewModel
+import com.example.evelin.ui.eventDetail.EventDetailViewModel
 import com.example.evelin.ui.home.HomeViewModel
 import com.example.evelin.ui.login.LoginViewModel
 import com.example.evelin.ui.profile.ProfileViewModel
 import com.example.evelin.ui.register.RegisterViewModel
+import com.example.evelin.ui.registerEvent.RegisterEventViewModel
 
 class ViewModelFactory(private val repository: UserRepository) : ViewModelProvider.NewInstanceFactory() {
 
@@ -27,6 +30,15 @@ class ViewModelFactory(private val repository: UserRepository) : ViewModelProvid
             }
             modelClass.isAssignableFrom(RegisterViewModel::class.java) -> {
                 RegisterViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(EventDetailViewModel::class.java) -> {
+                EventDetailViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(RegisterEventViewModel::class.java) -> {
+                RegisterEventViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(AddEventViewModel::class.java) -> {
+                AddEventViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

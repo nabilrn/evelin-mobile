@@ -18,7 +18,14 @@ data class LoginUser(
 	val id: Int,
 
 	@field:SerializedName("email")
-	val email: String
+	val email: String,
+
+	@field:SerializedName("name")
+	val name: String,
+	@field:SerializedName("noHp")
+	val noHp: String,
+	@field:SerializedName("institusi")
+	val institusi: String
 )
 
 data class DataUser(

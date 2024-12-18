@@ -4,9 +4,7 @@ package com.example.evelin.ui.registerEvent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,24 +12,43 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evelin.R
-import com.example.evelin.ui.component.utils.UploadMedia
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.evelin.ViewModelFactory
 
 @Composable
-fun RegisterEventScreen(onBackClick: () -> Unit = {}) {
+fun RegisterEventScreen(
+    onBackClick: () -> Unit = {},
+    eventId: String?,
+    viewModel: RegisterEventViewModel = viewModel(factory = ViewModelFactory.getInstance(LocalContext.current))
+) {
+    // Collect user data from ViewModel
+    val userData by viewModel.user.collectAsState()
+
+    // LaunchedEffect to fetch user data when screen loads
+    LaunchedEffect(eventId) {
+        viewModel.fetchUser()
+    }
+
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var phoneNumber by remember { mutableStateOf("") }
-    var institution by remember { mutableStateOf("") }
+    var noHp by remember { mutableStateOf("") }
+    var institusi by remember { mutableStateOf("") }
+
+    LaunchedEffect(userData) {
+        name = userData?.name ?: ""
+        email = userData?.email ?: ""
+        noHp = userData?.noHp ?: ""
+        institusi = userData?.institusi ?: ""
+    }
 
     Column(
         modifier = Modifier
@@ -71,24 +88,26 @@ fun RegisterEventScreen(onBackClick: () -> Unit = {}) {
             modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
         )
 
-        // Input Fields
-        InputField(label = "Nama", value = name) { name = it }
+        DisplayField(label = "Nama", value = name)
         Spacer(modifier = Modifier.height(8.dp))
-        InputField(label = "Email*", value = email) { email = it }
+        DisplayField(label = "Email*", value = email)
         Spacer(modifier = Modifier.height(8.dp))
-        InputField(label = "No. Telepon*", value = phoneNumber, keyboardType = KeyboardType.Phone) { phoneNumber = it }
+        DisplayField(label = "No. Telepon*", value = noHp)
         Spacer(modifier = Modifier.height(8.dp))
-        InputField(label = "Asal Institusi*", value = institution) { institution = it }
+        DisplayField(label = "Asal Institusi*", value = institusi)
         Spacer(modifier = Modifier.height(8.dp))
-
-        // Upload Media for Bukti Pembayaran
-        UploadMedia()
 
         Spacer(modifier = Modifier.height(32.dp))
 
         // Submit Button
         Button(
-            onClick = { /* Handle Submit */ },
+            onClick = {
+                eventId?.let { id ->
+                    viewModel.submitEventRegistration(
+                        eventId = id
+                    )
+                }
+            },
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Green),
             modifier = Modifier
@@ -105,15 +124,8 @@ fun RegisterEventScreen(onBackClick: () -> Unit = {}) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InputField(
-    label: String,
-    value: String,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    onValueChange: (String) -> Unit
-) {
+fun DisplayField(label: String, value: String) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = label,
@@ -122,27 +134,22 @@ fun InputField(
             fontSize = 14.sp
         )
         Spacer(modifier = Modifier.height(4.dp))
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
+        Text(
+            text = value,
+            color = Color.Black,
+            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 16.sp,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(LightGreen, RoundedCornerShape(8.dp)),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            trailingIcon = trailingIcon,
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Green,
-                unfocusedIndicatorColor = Color.Gray,
-                focusedContainerColor = LightGreen,
-                unfocusedContainerColor = LightGreen
-            )
+                .background(LightGreen, RoundedCornerShape(8.dp))
+                .padding(8.dp)
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
 }
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewRegisterEventScreen() {
-    RegisterEventScreen()
+    RegisterEventScreen(eventId = "1")
 }
