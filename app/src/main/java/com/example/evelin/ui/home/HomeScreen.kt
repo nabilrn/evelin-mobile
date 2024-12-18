@@ -1,4 +1,3 @@
-// HomeScreen.kt
 package com.example.evelin.ui.home
 
 import androidx.compose.foundation.layout.*
@@ -18,11 +17,10 @@ import com.example.evelin.ui.component.bar.TopBar
 import com.example.evelin.ui.component.item.EventItem
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
-import com.example.evelin.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.evelin.ViewModelFactory
-import com.example.evelin.data.response.DataItem
+import com.example.evelin.R
 
 @Composable
 fun HomeScreen(
@@ -34,7 +32,11 @@ fun HomeScreen(
     val events by viewModel.events.collectAsState()
 
     Column(modifier = modifier.fillMaxSize()) {
-        TopBar(onFilterClick = { /* Handle filter click */ })
+        TopBar(
+            onFilterClick = { /* Handle filter click */ },
+            onSearchTextChange = { query -> viewModel.searchEvents(query) },
+            navController = navController
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         // Upcoming Events

@@ -119,6 +119,10 @@ class UserRepository private constructor(
         }
     }
 
+    suspend fun searchEvents(token: String, query: String): EventsResponse {
+        return apiService.searchEvents(token, query)
+    }
+
 
     suspend fun submitEventRegistration(eventId: String): RegisterEventResponse {
         val token = getToken()

@@ -77,6 +77,8 @@ dependencies {
     ksp(libs.hilt.compiler.v2511)
 
     implementation ("com.pusher:pusher-java-client:2.2.1")
+    implementation ("androidx.compose.material:material-icons-extended:1.7.6") // Adjust version as needed
+
     implementation (libs.coil.compose)
 
 
