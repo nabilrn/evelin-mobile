@@ -7,6 +7,7 @@ import com.example.evelin.data.pref.UserPreference
 import com.example.evelin.data.remote.ApiService
 import com.example.evelin.data.request.LoginRequest
 import com.example.evelin.data.request.RegisterRequest
+import com.example.evelin.data.request.UpdateEventRequest
 import com.example.evelin.data.response.AddEventResponse
 import com.example.evelin.data.response.DataUser
 import com.example.evelin.data.response.EventResponse
@@ -105,10 +106,33 @@ class UserRepository private constructor(
         }
     }
 
+    suspend fun updateEvent(
+        eventId: String,
+        eventDate: String,
+        location: String
+    ): EventResponse {
+        val token = getToken()
+        return apiService.updateEvent("Bearer $token", eventId, UpdateEventRequest(eventDate, location))    }
+
     suspend fun getHistory(): HistoryResponse {
         val token = getToken()
         try {
             return apiService.getHistory("Bearer $token")
+        } catch (e: HttpException) {
+            if (e.code() == 401) {
+                logout()
+                throw e
+            } else {
+                throw e
+            }
+        }
+    }
+
+
+    suspend fun getMyEvent(): EventsResponse {
+        val token = getToken()
+        try {
+            return apiService.getMyEvent("Bearer $token")
         } catch (e: HttpException) {
             if (e.code() == 401) {
                 logout()

@@ -127,7 +127,7 @@ fun ProfileScreen(navController: NavController,
                     Text("Riwayat Kegiatan", color = Color.White)
                 }
                 Button(
-                    onClick = { /* TODO: Handle Kegiatan yang Diselenggarakan */ },
+                    onClick = { navController.navigate("myEvent") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                     shape = RoundedCornerShape(8.dp)
