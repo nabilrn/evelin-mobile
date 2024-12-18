@@ -1,19 +1,16 @@
 package com.example.evelin.ui.registerEvent
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evelin.data.UserRepository
-import com.example.evelin.data.response.DataItem
-import com.example.evelin.data.response.DataUser
 import com.example.evelin.data.response.LoginUser
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class RegisterEventViewModel (private val repository: UserRepository) : ViewModel() {
 
@@ -24,6 +21,8 @@ class RegisterEventViewModel (private val repository: UserRepository) : ViewMode
     private val _registrationStatus = MutableStateFlow<String?>(null)
     val registrationStatus: StateFlow<String?> = _registrationStatus.asStateFlow()
 
+    private val _navigateToHome = MutableLiveData<Boolean>()
+    val navigateToHome: LiveData<Boolean> = _navigateToHome
 
 //    fun registerEvent( eventId: String) {
 //        repository.registerEvent( eventId)
@@ -33,7 +32,6 @@ class RegisterEventViewModel (private val repository: UserRepository) : ViewMode
         viewModelScope.launch {
             try {
                 val response = repository.getUser()
-
                 _user.value = response
                 Log.d("RegisterEventViewModel", "User data fetched: $response")
             } catch (e: Exception) {
@@ -42,19 +40,15 @@ class RegisterEventViewModel (private val repository: UserRepository) : ViewMode
             }
         }
     }
-
-    fun submitEventRegistration(
-        eventId: String
-    ) {
+    fun submitEventRegistration(eventId: String) {
         viewModelScope.launch {
             try {
-                // Implement your specific event registration logic
-                val result = repository.submitEventRegistration(
-                    eventId = eventId
-                )
+                val result = repository.submitEventRegistration(eventId = eventId)
                 _registrationStatus.value = result.message
+                _navigateToHome.value = true
             } catch (e: Exception) {
                 _registrationStatus.value = e.message
+                _navigateToHome.value = false
                 // Log error or handle appropriately
             }
         }

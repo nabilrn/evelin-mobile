@@ -115,7 +115,7 @@ fun EvelinApp() {
             exitTransition = { fadeOut() }
         ) { EventHistoryScreen(navController = navController, onBackClick = { navController.popBackStack() }) }
         composable(
-            "eventDetail/{id}",  // Ensure this matches exactly
+            "eventDetail/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType }),
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() }
@@ -125,13 +125,15 @@ fun EvelinApp() {
         }
         composable(
             "registerEvent/{eventId}",
+            arguments = listOf(navArgument("eventId") { type = NavType.StringType }),
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() }
         ) { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId")
             RegisterEventScreen(
                 onBackClick = { navController.popBackStack() },
-                eventId = eventId
+                eventId = eventId,
+                navController = navController
             )
         }
     }

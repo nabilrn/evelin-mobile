@@ -2,12 +2,14 @@
 
 package com.example.evelin.ui.registerEvent
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,18 +24,22 @@ import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evelin.ViewModelFactory
 
 @Composable
 fun RegisterEventScreen(
     onBackClick: () -> Unit = {},
     eventId: String?,
+    navController: NavController,
     viewModel: RegisterEventViewModel = viewModel(factory = ViewModelFactory.getInstance(LocalContext.current))
 ) {
-    // Collect user data from ViewModel
+    val context = LocalContext.current
     val userData by viewModel.user.collectAsState()
+    val registrationStatus by viewModel.registrationStatus.collectAsState()
+    val navigateToHome by viewModel.navigateToHome.observeAsState()
 
-    // LaunchedEffect to fetch user data when screen loads
     LaunchedEffect(eventId) {
         viewModel.fetchUser()
     }
@@ -48,6 +54,13 @@ fun RegisterEventScreen(
         email = userData?.email ?: ""
         noHp = userData?.noHp ?: ""
         institusi = userData?.institusi ?: ""
+    }
+
+    LaunchedEffect(navigateToHome) {
+        if (navigateToHome == true) {
+            Toast.makeText(context, "Register event berhasil", Toast.LENGTH_SHORT).show()
+            navController.navigate("home")
+        }
     }
 
     Column(
@@ -103,9 +116,7 @@ fun RegisterEventScreen(
         Button(
             onClick = {
                 eventId?.let { id ->
-                    viewModel.submitEventRegistration(
-                        eventId = id
-                    )
+                    viewModel.submitEventRegistration(eventId = id)
                 }
             },
             shape = RoundedCornerShape(8.dp),
@@ -151,5 +162,6 @@ fun DisplayField(label: String, value: String) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewRegisterEventScreen() {
-    RegisterEventScreen(eventId = "1")
+    val navController = rememberNavController()
+    RegisterEventScreen(eventId = "1", navController = navController)
 }

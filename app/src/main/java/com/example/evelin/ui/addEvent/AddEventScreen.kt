@@ -5,6 +5,7 @@ package com.example.evelin.ui.addEvent
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -22,8 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -37,12 +38,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.evelin.ui.component.utils.DatePickerField
-import com.example.evelin.ui.component.utils.UploadMedia
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 import com.example.evelin.R
 import com.example.evelin.ViewModelFactory
-import com.example.evelin.ui.eventDetail.EventDetailViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -71,6 +70,18 @@ fun AddEventScreen(navController: NavController,
     ) { uri: Uri? ->
         imageUri = uri
     }
+
+    val addEventResult by viewModel.addEventResult.observeAsState()
+
+    LaunchedEffect(addEventResult) {
+        if (addEventResult == true) {
+            Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT).show()
+            navController.navigate("home") {
+                popUpTo("home") { inclusive = true }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,7 +97,7 @@ fun AddEventScreen(navController: NavController,
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = { navController.navigate("home") }) {
                 Icon(painter = painterResource(id = R.drawable.ic_back), contentDescription = "Back")
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -167,7 +178,6 @@ fun AddEventScreen(navController: NavController,
 
         Spacer(modifier = Modifier.height(16.dp))
 
-
         fun Uri.getFilePathFromUri(context: Context): File? {
             return try {
                 val inputStream = context.contentResolver.openInputStream(this)
@@ -184,14 +194,14 @@ fun AddEventScreen(navController: NavController,
                 null
             }
         }
+
         // Publish Button
         Button(
             onClick = {
-
-                val posterPart = imageUri.let { uri ->
-                    val file = File(uri?.path ?: "")
-                    val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-                    MultipartBody.Part.createFormData("posterFile", file.name, requestBody)
+                val posterPart = imageUri?.let { uri ->
+                    val file = uri.getFilePathFromUri(context)
+                    val requestBody = file?.asRequestBody("image/*".toMediaTypeOrNull())
+                    MultipartBody.Part.createFormData("posterUrl", file?.name, requestBody!!)
                 }
 
                 viewModel.viewModelScope.launch {
@@ -201,9 +211,10 @@ fun AddEventScreen(navController: NavController,
                         eventDate = tanggalWaktu.toRequestBody(),
                         location = lokasi.toRequestBody(),
                         category = kategoriAcara.toRequestBody(),
-                        posterUrl = posterPart
+                        posterUrl = posterPart!!,
+                        onSuccess = { /* No-op */ },
+                        onError = { e -> Log.e("AddEvent", "Error adding event", e) }
                     )
-                    navController.popBackStack()
                 }
             },
             modifier = Modifier
@@ -258,8 +269,6 @@ fun InputField(
     }
     Spacer(modifier = Modifier.height(12.dp))
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

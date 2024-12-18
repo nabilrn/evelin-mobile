@@ -64,5 +64,8 @@ data class DataItem(
 	val eventDate: String? = null,
 
 	@field:SerializedName("updatedAt")
-	val updatedAt: String? = null
+	val updatedAt: String? = null,
+
+	@field:SerializedName("isRegistered")
+	val isRegistered: Int? = null
 )

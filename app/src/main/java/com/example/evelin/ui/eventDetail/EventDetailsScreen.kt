@@ -25,24 +25,22 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.evelin.R
 import com.example.evelin.ViewModelFactory
-import com.example.evelin.ui.home.HomeViewModel
 import com.example.evelin.ui.theme.Green
 import com.example.evelin.ui.theme.LightGreen
 
 @Composable
-fun EventDetailsScreen(navController: NavController,    eventId: String?,
-
-                       viewModel: EventDetailViewModel = viewModel(factory = ViewModelFactory.getInstance(
-                           LocalContext.current))
+fun EventDetailsScreen(
+    navController: NavController,
+    eventId: String?,
+    viewModel: EventDetailViewModel = viewModel(factory = ViewModelFactory.getInstance(LocalContext.current))
 ) {
-
     LaunchedEffect(eventId) {
         eventId?.let {
             viewModel.getEvent(it)
         }
     }
 
-    val event by viewModel.events.collectAsState() // Observe events from ViewModel
+    val event by viewModel.events.collectAsState()
 
     val scrollState = rememberScrollState()
     Column(
@@ -91,7 +89,7 @@ fun EventDetailsScreen(navController: NavController,    eventId: String?,
             // Organizer
             EventInfoRow(
                 icon = painterResource(id = R.drawable.ic_organizer),
-                title = "BEM KM FTI UNAND",
+                title = event?.university ?: "Organizer",
                 subtitle = "+6281286823201"
             )
 
@@ -113,11 +111,20 @@ fun EventDetailsScreen(navController: NavController,    eventId: String?,
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Register Button
-            RegisterButton(navController, eventId)
-            Spacer(modifier = Modifier.height(16.dp))
-            CancelButton(navController = navController) // Pass navController here
+            // Registration Status
+            Text(
+                text = if (event?.isRegistered == 1) "You are registered for this event" else "You are not registered for this event",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = if (event?.isRegistered == 1) Color.Green else Color.Red
+            )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Register Button
+            RegisterButton(navController, eventId, event?.isRegistered == 1)
+            Spacer(modifier = Modifier.height(16.dp))
+            CancelButton(navController = navController)
         }
     }
 }
@@ -169,7 +176,7 @@ fun EventInfoRow(icon: Painter, title: String, subtitle: String) {
 }
 
 @Composable
-fun RegisterButton(navController: NavController, eventId: String?) {
+fun RegisterButton(navController: NavController, eventId: String?, isRegistered: Boolean) {
     Button(
         onClick = {
             eventId?.let {
@@ -180,7 +187,8 @@ fun RegisterButton(navController: NavController, eventId: String?) {
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF26A541)),
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(48.dp),
+        enabled = !isRegistered
     ) {
         Text(
             text = "Register Here",

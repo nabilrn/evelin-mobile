@@ -82,18 +82,20 @@ fun ProfileScreen(navController: NavController,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.reza_kecap), // Gambar profil
+                    painter = painterResource(id = R.drawable.image_example), // Gambar profil
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
                 )
+                //name
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = name,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
+                //email
                 Text(
                     text = "{$email} | ${noHp}",
                     fontSize = 12.sp,
